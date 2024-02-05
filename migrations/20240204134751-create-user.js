@@ -12,7 +12,7 @@ module.exports = {
       admin_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Admin',
+          model: 'Admins',
           key: 'id'
         },
         onUpdate: 'CASCADE',
