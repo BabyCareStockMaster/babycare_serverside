@@ -7,7 +7,6 @@ module.exports = {
       "Products",
       [
         {
-          admin_id: 1,
           name: "Diapers",
           price: 15,
           brand: "Pampers",
@@ -18,7 +17,6 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          admin_id: 1,
           name: "Baby Wipes",
           price: 10,
           brand: "Huggies",
@@ -29,7 +27,6 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          admin_id: 1,
           name: "Baby Shampoo",
           price: 8,
           brand: "Johnson's",
@@ -40,7 +37,6 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          admin_id: 1,
           name: "Baby Oil",
           price: 12,
           brand: "Johnson's",
@@ -51,7 +47,6 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          admin_id: 1,
           name: "Baby Powder",
           price: 7,
           brand: "Johnson's",
@@ -62,7 +57,6 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          admin_id: 1,
           name: "Baby Lotion",
           price: 9,
           brand: "Johnson's",
@@ -74,7 +68,6 @@ module.exports = {
         },
         // Adding more products to make a total of 12
         {
-          admin_id: 1,
           name: "Baby Bottle",
           price: 5,
           brand: "Avent",
@@ -85,7 +78,6 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          admin_id: 1,
           name: "Baby Bibs",
           price: 3,
           brand: "Gerber",
@@ -96,7 +88,6 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          admin_id: 1,
           name: "Baby Monitor",
           price: 50,
           brand: "Motorola",
@@ -107,7 +98,6 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          admin_id: 1,
           name: "Baby Carrier",
           price: 40,
           brand: "Ergobaby",
@@ -118,7 +108,6 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          admin_id: 1,
           name: "Baby Teether",
           price: 6,
           brand: "Nuby",
@@ -129,7 +118,6 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          admin_id: 1,
           name: "Baby Onesies",
           price: 10,
           brand: "Carter's",

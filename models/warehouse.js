@@ -13,11 +13,10 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Warehouse.belongsToMany(models.Product, {through: models.WarehouseStock, foreignKey: 'warehouse_id'})
       Warehouse.hasMany(models.Order, {foreignKey: 'warehouse_id'})
-      Warehouse.belongsTo(models.Admin,{foreignKey: 'admin_id'})
+      Warehouse.hasMany(models.warehouseActivity, {foreignKey: 'warehouse_id'})
     }
   }
   Warehouse.init({
-    admin_id: DataTypes.INTEGER,
     name: DataTypes.STRING,
     city: DataTypes.STRING,
     address: DataTypes.STRING

@@ -14,11 +14,9 @@ module.exports = (sequelize, DataTypes) => {
       Product.belongsToMany(models.Order,{through: models.OrderProduct,foreignKey: 'product_id'})
       Product.belongsToMany(models.Category,{through: models.ProductCategory, foreignKey: 'product_id'})
       Product.belongsToMany(models.Warehouse,{through: models.WarehouseStock, foreignKey: 'product_id'})
-      Product.belongsTo(models.Admin, {foreignKey: 'admin_id'})
     }
   }
   Product.init({
-    admin_id: DataTypes.INTEGER,
     name: DataTypes.STRING,
     price: DataTypes.INTEGER,
     brand: DataTypes.STRING,

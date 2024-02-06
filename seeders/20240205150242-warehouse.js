@@ -7,7 +7,6 @@ module.exports = {
       "Warehouses",
       [
         {
-          admin_id: 1,
           name: "Gudang 1",
           city: "Jogja",
           address: "Jl tentara no 5",
@@ -15,7 +14,6 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          admin_id: 1,
           name: "Gudang 2",
           city: "Jogja",
           address: "Jl tentara no 2",
@@ -23,7 +21,6 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          admin_id: 1,
           city: "mamarika",
           name: "Gudang 3",
           address: "jl tentara 3",
@@ -31,7 +28,6 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          admin_id: 1,
           city: "Butgerking",
           name: "Gudang 4",
           address: "696 buffet",
@@ -39,7 +35,6 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          admin_id: 1,
           city: "mason",
           name: "Gudang 5",
           address: "6666 luxury penthouse",
