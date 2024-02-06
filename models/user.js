@@ -10,7 +10,6 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       User.hasMany(models.Order,{foreignKey: 'order_id'})
-      User.belongsTo(models.Admin,{foreignKey: 'admin_id'})
     }
   }
   User.init(
@@ -56,14 +55,7 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: true
         }
-      },
-      admin_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-          notEmpty: true
-        }
-      },
+      }
     },
     {
       sequelize,
