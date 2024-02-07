@@ -1,17 +1,39 @@
 const {User} = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize');    
 
 
 class UserController {
     static async getAllUsers(req, res, next) {
         try {
-            const users = await User.findAll();
-            res.status(200).json({ users });
+            const { page = 1, limit = 10, search } = req.query;
+            const offset = (page - 1) * limit;
+            let whereClause = {};
+
+            // If search query is provided, add search condition
+            if (search) {
+                whereClause = {
+                    [Op.or]: [
+                        { first_name: { [Op.like]: `%${search}%` } },
+                        { last_name: { [Op.like]: `%${search}%` } }
+                    ]
+                };
+            }
+
+            // Find users with pagination and search condition
+            const users = await User.findAndCountAll({
+                where: whereClause,
+                limit: parseInt(limit),
+                offset: offset
+            });
+
+            res.status(200).json(users);
         } catch (error) {
-           next({name: 'internalServerError'});
+            next(error);
         }
     }
+
     static async getUsers(req, res, next) {
         try {
             const userId = req.user.id; // Accessing the user's ID from the token payload
