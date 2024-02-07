@@ -13,8 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Warehouse.belongsToMany(models.Product, {through: models.WarehouseStock, foreignKey: 'warehouse_id'})
       Warehouse.hasMany(models.Order, {foreignKey: 'warehouse_id'})
-      Warehouse.hasMany(models.warehouseActivity, {foreignKey: 'warehouse_id'})
-    }
+    } 
   }
   Warehouse.init({
     name: DataTypes.STRING,
