@@ -2,7 +2,7 @@ const express = require('express');
 const router = require('./routes');
 const cors = require('cors');
 const morgan = require('morgan');
-const errorHandler = require('./middlewares/errorHandler');
+const errorHandler = require('./middleware/errorHandler');
 const port = 4000
 const app = express()
 

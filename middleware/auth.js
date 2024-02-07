@@ -13,3 +13,4 @@ function auth(req, res, next) {
        next(error);
     }
 }
+module.exports = auth;

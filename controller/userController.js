@@ -2,6 +2,7 @@ const {User} = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+
 class UserController {
     static async getAllUsers(req, res, next) {
         try {
@@ -9,6 +10,19 @@ class UserController {
             res.status(200).json({ users });
         } catch (error) {
            next({name: 'internalServerError'});
+        }
+    }
+    static async getUsers(req, res, next) {
+        try {
+            const userId = req.user.id; // Accessing the user's ID from the token payload
+            const user = await User.findOne({ where: { id: userId } });
+            if (user) {
+                res.status(200).json({ user });
+            } else {
+                throw { name: 'notFound' };
+            }
+        } catch (error) {
+            next(error);
         }
     }
     static async getUser(req, res, next) {
@@ -62,12 +76,13 @@ class UserController {
         try {
             const { id } = req.params;
             const { first_name, last_name, email, password, address } = req.body;
+            const hashedPassword = await bcrypt.hash(password, 10);
             const user = await User.findOne({ where: { id } });
             if (user) {
                 user.first_name = first_name;
                 user.last_name = last_name;
                 user.email = email;
-                user.password = password;
+                user.password = hashedPassword;
                 user.address = address;
                 await user.save();
                 res.status(200).json({ user });
@@ -78,6 +93,21 @@ class UserController {
            next(error);
         }
     }
+    static async deleteUser(req, res, next) {
+        try {
+            const { id } = req.params;
+            const user = await User.findOne({ where: { id } });
+            if (user) {
+                await user.destroy();
+                res.status(200).json({ message: 'User deleted' });
+            } else {
+                throw {name: 'notFound'};
+            }
+        }
+        catch (error) {
+            next(error);
+        }
+}
 }
 
 module.exports = UserController;
