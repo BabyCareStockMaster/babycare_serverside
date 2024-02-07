@@ -48,13 +48,6 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: true
         }
-      },
-      company: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: true
-        }
       }
     },
     {
