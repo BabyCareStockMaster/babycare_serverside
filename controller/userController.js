@@ -3,39 +3,39 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 class UserController {
-    static async getAllUsers(req, res) {
+    static async getAllUsers(req, res, next) {
         try {
             const users = await User.findAll();
             res.status(200).json({ users });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+           next({name: 'internalServerError'});
         }
     }
-    static async getUser(req, res) {
+    static async getUser(req, res, next) {
         try {
             const { id } = req.params;
             const user = await User.findOne({ where: { id } });
             if (user) {
                 res.status(200).json({ user });
             } else {
-                res.status(404).json({ error: 'User not found' });
+               throw {name: 'notFound'};
             }
     }
     catch (error) {
-            res.status(500).json({ error: error.message });
+          next(error);
         }
     }
-    static async register(req, res) {
+    static async register(req, res, next) {
         try {
             const { first_name, last_name, email, password, address } = req.body;
             const hashedPassword = await bcrypt.hash(password, 10);
             const user = await User.create({ first_name, last_name, email, password: hashedPassword, address });
             res.status(201).json({ user });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+          next(error);
         }
     }
-    static async login(req, res) {
+    static async login(req, res, next) {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
@@ -48,17 +48,17 @@ class UserController {
                 const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
                 return res.status(200).json({ token });
             } else {
-                return res.status(400).json({ error: 'Invalid Password' });
+                throw {name: 'invalidLogin'};
             }
         } else {
-            return res.status(404).json({ error: 'User not found' });
+            throw {name: 'notFound'};
         }
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+      next(error);
     }
 }
 
-    static async updateUser(req, res) {
+    static async updateUser(req, res, next) {
         try {
             const { id } = req.params;
             const { first_name, last_name, email, password, address } = req.body;
@@ -72,10 +72,10 @@ class UserController {
                 await user.save();
                 res.status(200).json({ user });
             } else {
-                res.status(404).json({ error: 'User not found' });
+               throw {name: 'notFound'};
             }
         }catch (error) {
-            res.status(500).json({ error: error.message });
+           next(error);
         }
     }
 }
