@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     },
     status: {
-      type: DataTypes.ENUM('online', 'offline', 'via b2b'),
+      type: DataTypes.ENUM('online', 'offline', 'b2b'),
       allowNull: false,
       validate: {
         notEmpty: true

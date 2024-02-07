@@ -32,7 +32,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          notEmpty: true
+          notEmpty: true,
+          isEmail: true
         }
       },
       password: {
@@ -43,13 +44,6 @@ module.exports = (sequelize, DataTypes) => {
           }
         },
       address: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: true
-        }
-      },
-      company: {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
