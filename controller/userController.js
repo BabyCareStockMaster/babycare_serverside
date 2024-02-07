@@ -72,26 +72,26 @@ class UserController {
         }
     }
     static async login(req, res, next) {
-    try {
-        const { email, password } = req.body;
-        if (!email || !password) {
-            return res.status(400).json({ error: 'Email and password are required' });
-        }
-        const user = await User.findOne({ where: { email } });
-        if (user) {
-            const valid = await bcrypt.compare(password, user.password);
-            if (valid) {
-                const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-                return res.status(200).json({ token });
-            } else {
-                throw {name: 'invalidLogin'};
+        try {
+            const { email, password } = req.body;
+            if (!email || !password) {
+                return res.status(400).json({ error: 'Email and password are required' });
             }
-        } else {
-            throw {name: 'notFound'};
+            const user = await User.findOne({ where: { email } });
+            if (user) {
+                const valid = await bcrypt.compare(password, user.password);
+                if (valid) {
+                    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
+                    return res.status(200).json({ token });
+                } else {
+                    throw {name: 'invalidLogin'};
+                }
+            } else {
+                throw {name: 'notFound'};
+            }
+        } catch (error) {
+        next(error);
         }
-    } catch (error) {
-      next(error);
-    }
 }
 
     static async updateUser(req, res, next) {
