@@ -22,7 +22,8 @@ module.exports = {
         type: Sequelize.STRING
       },
       SKU: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        unique: true
       },
       image: {
         type: Sequelize.STRING
