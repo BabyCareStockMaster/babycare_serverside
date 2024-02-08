@@ -1,83 +1,135 @@
 const {User} = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize');    
+
 
 class UserController {
-    static async getAllUsers(req, res) {
+    static async getAllUsers(req, res, next) {
         try {
-            const users = await User.findAll();
-            res.status(200).json({ users });
+            const { page = 1, limit = 10, search } = req.query;
+            const offset = (page - 1) * limit;
+            let whereClause = {};
+
+            // If search query is provided, add search condition
+            if (search) {
+                whereClause = {
+                    [Op.or]: [
+                        { first_name: { [Op.like]: `%${search}%` } },
+                        { last_name: { [Op.like]: `%${search}%` } }
+                    ]
+                };
+            }
+
+            // Find users with pagination and search condition
+            const users = await User.findAndCountAll({
+                where: whereClause,
+                limit: parseInt(limit),
+                offset: offset
+            });
+
+            res.status(200).json(users);
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            next(error);
         }
     }
-    static async getUser(req, res) {
+
+    static async getUsers(req, res, next) {
+        try {
+            const userId = req.user.id; // Accessing the user's ID from the token payload
+            const user = await User.findOne({ where: { id: userId } });
+            if (user) {
+                res.status(200).json({ user });
+            } else {
+                throw { name: 'notFound' };
+            }
+        } catch (error) {
+            next(error);
+        }
+    }
+    static async getUser(req, res, next) {
         try {
             const { id } = req.params;
             const user = await User.findOne({ where: { id } });
             if (user) {
                 res.status(200).json({ user });
             } else {
-                res.status(404).json({ error: 'User not found' });
+               throw {name: 'notFound'};
             }
     }
     catch (error) {
-            res.status(500).json({ error: error.message });
+          next(error);
         }
     }
-    static async register(req, res) {
+    static async register(req, res, next) {
         try {
             const { first_name, last_name, email, password, address } = req.body;
             const hashedPassword = await bcrypt.hash(password, 10);
             const user = await User.create({ first_name, last_name, email, password: hashedPassword, address });
             res.status(201).json({ user });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+          next(error);
         }
     }
-    static async login(req, res) {
-    try {
-        const { email, password } = req.body;
-        if (!email || !password) {
-            return res.status(400).json({ error: 'Email and password are required' });
-        }
-        const user = await User.findOne({ where: { email } });
-        if (user) {
-            const valid = await bcrypt.compare(password, user.password);
-            if (valid) {
-                const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
-                return res.status(200).json({ token });
-            } else {
-                return res.status(400).json({ error: 'Invalid Password' });
+    static async login(req, res, next) {
+        try {
+            const { email, password } = req.body;
+            if (!email || !password) {
+                return res.status(400).json({ error: 'Email and password are required' });
             }
-        } else {
-            return res.status(404).json({ error: 'User not found' });
+            const user = await User.findOne({ where: { email } });
+            if (user) {
+                const valid = await bcrypt.compare(password, user.password);
+                if (valid) {
+                    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
+                    return res.status(200).json({ token });
+                } else {
+                    throw {name: 'invalidLogin'};
+                }
+            } else {
+                throw {name: 'notFound'};
+            }
+        } catch (error) {
+        next(error);
         }
-    } catch (error) {
-        return res.status(500).json({ error: error.message });
-    }
 }
 
-    static async updateUser(req, res) {
+    static async updateUser(req, res, next) {
         try {
             const { id } = req.params;
             const { first_name, last_name, email, password, address } = req.body;
+            const hashedPassword = await bcrypt.hash(password, 10);
             const user = await User.findOne({ where: { id } });
             if (user) {
                 user.first_name = first_name;
                 user.last_name = last_name;
                 user.email = email;
-                user.password = password;
+                user.password = hashedPassword;
                 user.address = address;
                 await user.save();
                 res.status(200).json({ user });
             } else {
-                res.status(404).json({ error: 'User not found' });
+               throw {name: 'notFound'};
             }
         }catch (error) {
-            res.status(500).json({ error: error.message });
+           next(error);
         }
     }
+    static async deleteUser(req, res, next) {
+        try {
+            const { id } = req.params;
+            const user = await User.findOne({ where: { id } });
+            if (user) {
+                await user.destroy();
+                res.status(200).json({ message: 'User deleted' });
+            } else {
+                throw {name: 'notFound'};
+            }
+        }
+        catch (error) {
+            next(error);
+        }
+}
 }
 
 module.exports = UserController;
