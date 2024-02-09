@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
         validate: {
           notEmpty: true
-        } 
+        }
     }
   }, {
     sequelize,
