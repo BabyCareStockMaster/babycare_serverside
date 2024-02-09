@@ -15,12 +15,7 @@ const errorHandler = (err, req, res, next) => {
   if(err.name === 'unauthorized'){
     return res.status(401).json({ error: 'Unauthorized' });
   }
-<<<<<<< HEAD
   return res.status(500).json({ message: err.message || 'Internal Server Error' });
 }
-=======
-  return res.status(500).json({ error: err.message });
-} 
->>>>>>> development
 
 module.exports = errorHandler;
