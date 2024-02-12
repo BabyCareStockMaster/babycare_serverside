@@ -20,18 +20,44 @@ class WarehouseController {
 
   static getAll = async (req, res, next) => {
     try {
-      const data = await Warehouse.findAll({
-        include: [
-          {
-            model: Product
-          }
-        ]
-      });
-      res.status(200).json(data);
+        const { page, pageSize, name, city, address, sort } = req.query;
+
+        // Define pagination
+        let paginationClause = {};
+        if (page && pageSize) {
+            paginationClause = {
+                offset: (page - 1) * pageSize,
+                limit: parseInt(pageSize),
+            };
+        }
+
+        // Define filtering criteria
+        const whereClause = {};
+        if (name) whereClause.name = name;
+        if (city) whereClause.city = city;
+        if (address) whereClause.address = address;
+
+        // Define sorting
+        let orderClause = [];
+        if (sort === "latest") orderClause = [["createdAt", "DESC"]];
+        if (sort === "oldest") orderClause = [["createdAt", "ASC"]];
+
+        // Retrieve warehouses with optional filtering, pagination, and sorting
+        const data = await Warehouse.findAll({
+            where: whereClause,
+            include: [{
+                model: Product,
+            }],
+            ...paginationClause,
+            order: orderClause,
+        });
+
+        res.status(200).json(data);
     } catch (err) {
-      next(err);
+        next(err);
     }
-  };
+};
+
 
   static getById = async (req, res, next) => {
     try {
