@@ -1,23 +1,28 @@
-const { WarehouseStock } = require("../models");
+const { Warehouse, WarehouseStock, Product } = require("../models");
 
 class WarehouseStockController {
   static async getStocks(req, res, next) {
     try {
       const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 10;
+      const limit = parseInt(req.query.limit) || 20;
       const offset = (page - 1) * limit;
 
-      const warehouseStocks = await WarehouseStock.findAndCountAll({
+      const warehouse = await Warehouse.findAndCountAll({
         limit,
         offset,
+        include: [
+          {
+            model: Product,
+          }
+        ]
       });
 
-      const totalPages = Math.ceil(warehouseStocks.count / limit);
+      const totalPages = Math.ceil(warehouse.count / limit);
 
       res.status(200).json({
         totalPages,
         currentPage: page,
-        data: warehouseStocks.rows,
+        data: warehouse.rows,
       });
     } catch (error) {
       next(error);
@@ -26,19 +31,36 @@ class WarehouseStockController {
   static async updateStock(req, res, next) {
     try {
       const { id } = req.params;
-      const { stock } = req.body;
-      const warehouseStock = await WarehouseStock.findByPk(id);
-      if (!warehouseStock) {
-        return res.status(404).json({
-          message: "Product Not Found",
+      const { product_id, stock } = req.body;
+
+      const warehouse = await Warehouse.findByPk(id);
+      const product = await Product.findByPk(product_id);
+      if (!warehouse)
+        throw { name: "notFound" };
+      if(!product)
+        throw { name: "notFound"}
+      const warehouseStock = await WarehouseStock.findOne({
+        where: { warehouse_id: id, product_id: product_id }
+      });
+      if (warehouseStock) {
+        warehouseStock.stock = stock; // Update the stock
+        await warehouseStock.save();
+        res.status(200).json({
+          message: "Successfully updated stock",
+          data: warehouseStock
         });
       }
-      warehouseStock.stock = stock; // Update the stock
-      await warehouseStock.save();
-      res.status(200).json({
-        message: "Successfully updated stock",
-        data: warehouseStock
-      });
+      else {
+        const newWarehouseStock = await WarehouseStock.create({
+          warehouse_id: id,
+          product_id: product_id,
+          stock: stock
+        });
+        res.status(200).json({
+          message: "Successfully created stock",
+          data: newWarehouseStock
+        });
+      }
     } catch (error) {
       next(error);
     }

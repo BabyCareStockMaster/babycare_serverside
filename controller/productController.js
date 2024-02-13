@@ -4,8 +4,7 @@ const { Product, Category, ProductCategory } = require("../models");
 class ProductController {
   static async createProduct(req, res, next) {
     try {
-      const { name, price, brand, description, SKU, categories } = req.body;
-      const imageData = req.file ? req.file.path : null;
+      const { name, price, brand, description, SKU, categories, image } = req.body;
 
       // Create the product
       const product = await Product.create({
@@ -14,7 +13,7 @@ class ProductController {
         brand,
         description,
         SKU,
-        image: imageData,
+        image
       });
 
       // Assign categories to the product
@@ -119,8 +118,7 @@ class ProductController {
   static async updateProduct(req, res, next) {
     try {
       const { id } = req.params;
-      const { name, price, brand, description, SKU, categories } = req.body;
-      const imageData = req.file ? req.file.path : null;
+      const { name, price, brand, description, SKU, categories, image } = req.body;
 
       // Update the product
       await Product.update(
@@ -130,7 +128,7 @@ class ProductController {
           brand,
           description,
           SKU,
-          image: imageData,
+          image
         },
         {
           where: { id },
@@ -145,12 +143,12 @@ class ProductController {
         // Add new categories
         for (let i = 0; i < categories.length; i++) {
           const category = await Category.findOne({
-            where: { name: categories[i] },
+            where: { id: categories[i] },
           });
           if (category) {
             await ProductCategory.create({
-              productId: id,
-              categoryId: category.id,
+              product_id: id,
+              category_id: category.id,
             });
           }
         }

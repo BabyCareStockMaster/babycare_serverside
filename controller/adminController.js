@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 class AdminController{
     static async getAllAdmins(req, res, next){
         try {
-         const admins = await Admin.findAll();
+            const admins = await Admin.findAll();
             res.status(200).json(admins);
         } catch (error) {
             next(error);
@@ -57,7 +57,7 @@ class AdminController{
             next(error);
         }
     }
-    
+
 }
 
 module.exports = AdminController;

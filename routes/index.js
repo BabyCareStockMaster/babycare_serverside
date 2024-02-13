@@ -9,6 +9,7 @@ const WarehouseStockRouter = require("./warehousestock");
 const CategoryRouter = require("./category");
 const auth = require("../middleware/auth");
 
+// router.use("/api/uploads", )
 router.use("/api/auth", AuthRouter);
 router.use(auth);
 router.use("/api/users", UserRouter);
