@@ -1,6 +1,7 @@
 const errorHandler = (err, req, res, next) => {
   if (err.name === 'SequelizeUniqueConstraintError') {
-    return res.status(400).json({ error: 'Email already exists' });
+    console.log(err.message)
+    return res.status(400).json({ error: 'Field already exists', message: err.errors[0].message });
   }
   if (err.name === 'SequelizeValidationError') {
     const errors = err.errors.map((error) => error.message);

@@ -21,12 +21,14 @@ class ProductController {
       if (categories && categories.length > 0) {
         for (let i = 0; i < categories.length; i++) {
           const category = await Category.findOne({
-            where: { name: categories[i] },
+            where: { id: categories[i] },
           });
+          console.log(category.id)
+          console.log(product.id)
           if (category) {
             await ProductCategory.create({
-              productId: product.id,
-              categoryId: category.id,
+              product_id: product.id,
+              category_id: category.id,
             });
           }
         }
@@ -47,7 +49,7 @@ class ProductController {
       // Define the where clause for the query
       let whereClause = {};
       if (SKU) whereClause.SKU = SKU;
-      if (name) whereClause.name = { [Op.like]: `%${name}%` };
+      if (name) whereClause.name = { [Op.iLike]: `%${name}%` };
       if (id) whereClause.id = id;
 
       // Define the order clause for the query
@@ -55,6 +57,7 @@ class ProductController {
       if (sort === "latest") orderClause = [["createdAt", "DESC"]];
       if (sort === "oldest") orderClause = [["createdAt", "ASC"]];
       if (sort === "price") orderClause = [["price", "ASC"]];
+      if (sort === "price") orderClause = [["price", "DESC"]];
 
       // Define the pagination clause for the query
       let paginationClause = {};
@@ -68,11 +71,10 @@ class ProductController {
       // If a category is specified, find the category and get its associated products
       if (categoryName) {
         const category = await Category.findOne({
-          where: { name: categoryName },
+          where: { name: { [Op.iLike]: `%${categoryName}%` } },
         });
         if (!category)
-          return res.status(404).json({ error: "Category not found" });
-
+          throw { name: "notFound" };
         const products = await category.getProducts({
           where: whereClause,
           order: orderClause,
@@ -108,9 +110,7 @@ class ProductController {
           data: product,
         });
       } else {
-        res.status(404).json({
-          message: "Product Not Found",
-        });
+        throw { name: "notFound" };
       }
     } catch (error) {
       next(error);
