@@ -48,7 +48,7 @@ class WarehouseStockController {
         const warehouse = await Warehouse.findAndCountAll({
           include: [
             {
-              model: Product,
+              model: Product, 
               where: {
                 createdAt: {
                   [Op.lt]: oldDate,
