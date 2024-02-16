@@ -49,47 +49,44 @@ class WarehouseStockController {
           include: [
             {
               model: Product,
-             where: {
+              where: {
                 createdAt: {
                   [Op.lt]: oldDate,
                 },
+              },
             },
-        }],
+          ],
         });
 
-        
         let emailText = "List Products:\n\n";
         let hasOldStock = false;
         warehouse.rows.forEach((warehouse) => {
           warehouse.Products.forEach((product) => {
-            if(product.WarehouseStock.createdAt < oldDate)
-            hasOldStock = true;
-          emailText += `Product Name: ${product.name}, Warehouse: ${warehouse.name}\n`;
+            if (product.WarehouseStock.createdAt < oldDate) hasOldStock = true;
+            emailText += `Product Name: ${product.name}, Warehouse: ${warehouse.name}\n`;
+          });
         });
-      });
-      if (hasOldStock) {
-        const subject = "Product Alert";
-        sendMail(subject, emailText);
+        if (hasOldStock) {
+          const subject = "Product Alert";
+          sendMail(subject, emailText);
+        }
       }
-
-      }
-      cron.schedule("* * * * *", () => {
-        console.log("Running a task every minute");
-        oldStockAlert();
-      }, {
-        timezone: "Asia/Jakarta"
-      });
-
-      
-      
-          
+      cron.schedule(
+        "* * * * *",
+        () => {
+          console.log("Running a task every minute");
+          oldStockAlert();
+        },
+        {
+          timezone: "Asia/Jakarta",
+        }
+      );
 
       res.status(200).json({
         totalPages,
         currentPage: page,
         data: warehouse.rows,
       });
-      
     } catch (error) {
       next(error);
     }
