@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const auth = require("../middleware/auth");
 const UserRouter = require("./user");
 const AdminRouter = require("./admin");
 const AuthRouter = require("./auth");
@@ -7,9 +8,9 @@ const ProductRouter = require("./product");
 const WarehouseRouter = require("./warehouse");
 const WarehouseStockRouter = require("./warehousestock");
 const CategoryRouter = require("./category");
-const auth = require("../middleware/auth");
+const UploadRouter = require("./upload");
 
-// router.use("/api/uploads", )
+router.use("/api/uploads", UploadRouter);
 router.use("/api/auth", AuthRouter);
 router.use(auth);
 router.use("/api/users", UserRouter);
