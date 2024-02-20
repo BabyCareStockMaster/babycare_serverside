@@ -1,14 +1,13 @@
 const { Warehouse, WarehouseStock, Product } = require("../models");
 const { sendMail } = require("../lib/nodemailer");
 const cron = require("node-cron");
-const { Op } = require("sequelize");
+
 class WarehouseStockController {
   static async getStocks(req, res, next) {
     try {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 20;
       const offset = (page - 1) * limit;
-
       const warehouse = await Warehouse.findAndCountAll({
         limit,
         offset,
@@ -21,67 +20,19 @@ class WarehouseStockController {
       const totalPages = Math.ceil(warehouse.count / limit);
 
       // send email if stock is empty
-      let emailText = "List Products:\n\n";
+      let emailText = "List Products With Empty Stock:\n\n";
       // Check if there are any products with zero stock
-      let hasEmptyStock = false;
-      // Iterate through warehouses and products
       warehouse.rows.forEach((warehouse) => {
         warehouse.Products.forEach((product) => {
           // If the product has zero stock
           if (product.WarehouseStock.stock === 0) {
-            hasEmptyStock = true;
             emailText += `Product Name: ${product.name},  ${warehouse.name}\n`;
+            console.log(`${product.name}, ${warehouse.name}`);
           }
         });
       });
-
-      // If there are products with zero stock, send the email
-      if (hasEmptyStock) {
-        const subject = "Stock Notification";
-        sendMail(subject, emailText);
-      }
-      //send alert when product has been in the warehouse for more than 3 months
-      async function oldStockAlert() {
-        const today = new Date();
-        const oldDate = new Date(today - 90 * 24 * 60 * 60 * 1000);
-        console.log(oldDate);
-        const warehouse = await Warehouse.findAndCountAll({
-          include: [
-            {
-              model: Product, 
-              where: {
-                createdAt: {
-                  [Op.lt]: oldDate,
-                },
-              },
-            },
-          ],
-        });
-
-        let emailText = "List Products:\n\n";
-        let hasOldStock = false;
-        warehouse.rows.forEach((warehouse) => {
-          warehouse.Products.forEach((product) => {
-            if (product.WarehouseStock.createdAt < oldDate) hasOldStock = true;
-            emailText += `Product Name: ${product.name}, Warehouse: ${warehouse.name}\n`;
-          });
-        });
-        if (hasOldStock) {
-          const subject = "Product Alert";
-          sendMail(subject, emailText);
-        }
-      }
-      cron.schedule(
-        "* * * * *",
-        () => {
-          console.log("Running a task every minute");
-          oldStockAlert();
-        },
-        {
-          timezone: "Asia/Jakarta",
-        }
-      );
-
+      const subject = "Stock Notification";
+      sendMail(subject, emailText);
       res.status(200).json({
         totalPages,
         currentPage: page,
