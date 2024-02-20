@@ -10,6 +10,9 @@ const errorHandler = (err, req, res, next) => {
   if(err.name === 'notFound'){
     return res.status(404).json({ error: 'not found' });
   }
+  if(err.name === 'productNotFound'){
+    return res.status(404).json({ error: 'Product not found' });
+  }
   if(err.name === 'invalidLogin'){
     return res.status(400).json({ error: 'Invalid email or password' });
   }
