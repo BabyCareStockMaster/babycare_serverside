@@ -18,7 +18,13 @@ module.exports = (sequelize, DataTypes) => {
     last_name: DataTypes.STRING,
     email: DataTypes.STRING,
     username: DataTypes.STRING,
-    password: DataTypes.STRING
+    password: DataTypes.STRING,
+    role: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        return 'admin';
+      },
+    }
   }, {
     sequelize,
     modelName: 'Admin',

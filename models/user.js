@@ -49,6 +49,12 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: true
         }
+      },
+      role: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return 'user';
+        },
       }
     },
     {

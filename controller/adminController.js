@@ -32,7 +32,7 @@ class AdminController{
             if (admin) {
                 const valid = await bcrypt.compare(password, admin.password);
                 if (valid) {
-                    const token = jwt.sign({ id: admin.id }, process.env.JWT_SECRET);
+                    const token = jwt.sign({ id: admin.id, role:"admin" }, process.env.JWT_SECRET);
                     return res.status(200).json({ token });
                 } else {
                     throw {name: 'invalidLogin'};

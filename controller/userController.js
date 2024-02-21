@@ -81,7 +81,7 @@ class UserController {
             if (user) {
                 const valid = await bcrypt.compare(password, user.password);
                 if (valid) {
-                    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
+                    const token = jwt.sign({ id: user.id, role:"user" }, process.env.JWT_SECRET);
                     return res.status(200).json({ token });
                 } else {
                     throw {name: 'invalidLogin'};
