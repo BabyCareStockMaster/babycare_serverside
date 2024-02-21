@@ -9,7 +9,6 @@ const WarehouseRouter = require("./warehouse");
 const WarehouseStockRouter = require("./warehousestock");
 const CategoryRouter = require("./category");
 const OrderRouter = require("./order");
-const auth = require("../middleware/auth");
 const UploadRouter = require("./upload");
 
 router.use("/api/uploads", UploadRouter);
