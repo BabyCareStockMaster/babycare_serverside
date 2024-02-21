@@ -51,27 +51,6 @@ class WarehouseController {
         ...paginationClause,
         order: orderClause,
       });
-      //send alert when product has been 3 month in warehouse
-      let emailText = "List Products With 3 Month in Warehouse:\n\n";
-      data.forEach((warehouse) => {
-        warehouse.Products.forEach((product) => {
-          const today = new Date(); // Get the current date and time
-          const createdAt = new Date(product.createdAt); // Get the creation date of the warehouse
-
-          // Calculate the date 3 months ago from the current date
-          const threeMonthsAgo = new Date(today);
-          threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-          const diffTime = Math.abs(today - createdAt);
-          // Convert the difference in milliseconds to days
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-          if (diffDays >= 90) {
-            emailText += `Product Name: ${product.name}, ${warehouse.name}\n`;
-          }
-        });
-      });
-
-      const subject = "Product Alerts";
-      sendMail(subject, emailText);
       res.status(200).json(data);
     } catch (err) {
       next(err);

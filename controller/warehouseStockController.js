@@ -1,7 +1,7 @@
 const { Warehouse, WarehouseStock, Product } = require("../models");
 const { sendMail } = require("../lib/nodemailer");
 const cron = require("node-cron");
-
+const { Op } = require("sequelize");
 class WarehouseStockController {
   static async getStocks(req, res, next) {
     try {
@@ -17,22 +17,7 @@ class WarehouseStockController {
           },
         ],
       });
-      const totalPages = Math.ceil(warehouse.count / limit);
-
-      // send email if stock is empty
-      let emailText = "List Products With Empty Stock:\n\n";
-      // Check if there are any products with zero stock
-      warehouse.rows.forEach((warehouse) => {
-        warehouse.Products.forEach((product) => {
-          // If the product has zero stock
-          if (product.WarehouseStock.stock === 0) {
-            emailText += `Product Name: ${product.name},  ${warehouse.name}\n`;
-            console.log(`${product.name}, ${warehouse.name}`);
-          }
-        });
-      });
-      const subject = "Stock Notification";
-      sendMail(subject, emailText);
+      const totalPages = Math.ceil(warehouse.count / limit);  
       res.status(200).json({
         totalPages,
         currentPage: page,
@@ -40,6 +25,87 @@ class WarehouseStockController {
       });
     } catch (error) {
       next(error);
+    }
+  }
+  static async checkEmptyStock(req, res, next) {
+    try {
+      const warehouseStocks = await WarehouseStock.findAll({
+        where : {
+          stock : 0
+        }, 
+        include : [
+          {
+            model : Warehouse
+          },
+          {
+            model : Product
+          }
+        ]
+        
+      });
+
+      if(warehouseStocks.length > 0){
+        //mapping
+        const emptyStocks = warehouseStocks.map((stock)=> {
+          return {
+            warehouse : stock.Warehouse.name,
+            product : `${stock.Product.name} - ${stock.Product.SKU}`
+          }
+          
+        })
+        console.log(emptyStocks)
+
+        //send email
+        let emailText = "List Products With Empty Stock:\n\n";
+        emptyStocks.forEach((stock , index) => {
+          emailText += `${index + 1}. Product Name: ${stock.product},  ${stock.warehouse}\n`;
+        })
+        const subject = "Stock Notif"
+        sendMail(subject, emailText)
+      }else {
+        console.log("No empty stock")
+      }
+    } catch(error){
+      next(error)
+    }
+  }
+  static async checkSurplusStock(req, res, next) {
+    try {
+      const threeMonthsAgo = new Date();
+      threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+      let warehouseStocks = await WarehouseStock.findAll({
+        where : {
+          createdAt: {
+            [Op.lt]: threeMonthsAgo
+          }
+        },  
+        include : [
+          {
+            model : Warehouse
+          },
+          {
+            model : Product
+          }
+        ]
+      })
+      if(warehouseStocks.length > 0){
+        const surplusStocks = warehouseStocks.map((stock, index)=> {
+          return {
+            warehouse : stock.Warehouse.name,
+            product : `${stock.Product.name} - ${stock.Product.SKU}`
+          }  
+        })
+        //send email
+        let emailText = "List Products With Surplus Stock:\n\n";
+        surplusStocks.forEach((stock , index) => {
+          emailText += `${index + 1}. Product Name: ${stock.product},  ${stock.warehouse}\n`;
+        })
+        const subject = "Notif Surplus Stock"
+        sendMail(subject, emailText)
+
+      }
+    } catch(error){
+      next(error)
     }
   }
   static async updateStock(req, res, next) {
