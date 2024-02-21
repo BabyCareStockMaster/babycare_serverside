@@ -1,6 +1,5 @@
 const { Warehouse, Product } = require("../models");
 const { sendMail } = require("../lib/nodemailer");
-const cron = require("node-cron");
 
 class WarehouseController {
   static create = async (req, res, next) => {

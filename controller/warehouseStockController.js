@@ -108,7 +108,7 @@ class WarehouseStockController {
       next(error)
     }
   }
-     static async updateStock(req, res, next) {
+  static async updateStock(req, res, next) {
     try {
       const { id } = req.params;
       const { product_id, stock } = req.body;

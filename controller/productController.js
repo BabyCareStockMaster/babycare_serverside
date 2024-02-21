@@ -41,6 +41,25 @@ class ProductController {
       next(error);
     }
   }
+  static async uploadImage(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      // Find the product
+      const product = await Product.findByPk(id);
+      if (!product) throw { name: "ProductNotFound" };
+
+      // Update the image
+      product.image = req.file.path;
+      await product.save();
+      res.status(200).json({
+        message: "Successfully uploaded image",
+        data: product,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
   static async getAllProducts(req, res, next) {
     try {
       const { categoryName, SKU, name, id, sort, page, limit } = req.query;
