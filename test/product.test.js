@@ -2,7 +2,6 @@ const app = require('../app');
 const request = require('supertest');
 const fs = require('fs');
 const path = require('path');
-const {Product} = require('../models');
 
 describe('Product', () => {
   test('create product', (done) => {
