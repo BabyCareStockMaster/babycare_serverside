@@ -6,7 +6,7 @@ class WarehouseStockController {
   static async getStocks(req, res, next) {
     try {
       const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 20;
+      const limit = parseInt(req.query.limit) || 10;
       const offset = (page - 1) * limit;
       const warehouse = await Warehouse.findAndCountAll({
         limit,
@@ -17,8 +17,9 @@ class WarehouseStockController {
           },
         ],
       });
-      const totalPages = Math.ceil(warehouse.count / limit);  
+      const totalPages = Math.ceil(warehouse.count / limit);
       res.status(200).json({
+        message: "Successfully get Stocks",
         totalPages,
         currentPage: page,
         data: warehouse.rows,
@@ -32,7 +33,7 @@ class WarehouseStockController {
       const warehouseStocks = await WarehouseStock.findAll({
         where : {
           stock : 0
-        }, 
+        },
         include : [
           {
             model : Warehouse
@@ -41,7 +42,7 @@ class WarehouseStockController {
             model : Product
           }
         ]
-        
+
       });
 
       if(warehouseStocks.length > 0){
@@ -51,7 +52,7 @@ class WarehouseStockController {
             warehouse : stock.Warehouse.name,
             product : `${stock.Product.name} - ${stock.Product.SKU}`
           }
-          
+
         })
         console.log(emptyStocks)
 
@@ -78,7 +79,7 @@ class WarehouseStockController {
           createdAt: {
             [Op.lt]: threeMonthsAgo
           }
-        },  
+        },
         include : [
           {
             model : Warehouse
@@ -93,7 +94,7 @@ class WarehouseStockController {
           return {
             warehouse : stock.Warehouse.name,
             product : `${stock.Product.name} - ${stock.Product.SKU}`
-          }  
+          }
         })
         //send email
         let emailText = "List Products With Surplus Stock:\n\n";

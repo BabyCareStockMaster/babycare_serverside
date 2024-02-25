@@ -4,8 +4,8 @@
   "description": "babycare_serverside using expressjs, sequelize, nodejs,",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev" : "nodemon app.js"
+    "test": "jest --detectOpenHandles --no-cache --watchAll",
+    "dev": "nodemon app.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,6 +14,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.2",
     "express": "^4.18.2",
+    "jest": "^29.7.0",
     "jsonwebtoken": "^9.0.2",
     "mailgen": "^2.0.28",
     "morgan": "^1.10.0",
@@ -22,7 +23,8 @@
     "nodemailer": "^6.9.9",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.36.0"
+    "sequelize": "^6.36.0",
+    "supertest": "^6.3.4"
   },
   "devDependencies": {
     "sequelize-cli": "^6.6.2"

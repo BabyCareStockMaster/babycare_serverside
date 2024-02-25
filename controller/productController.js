@@ -124,7 +124,7 @@ class ProductController {
       const product = await Product.findByPk(id);
       if (product) {
         res.status(200).json({
-          message: "Succesfully get Product",
+          message: "Successfully get Product",
           data: product,
         });
       } else {
@@ -186,7 +186,7 @@ class ProductController {
       const { id } = req.params;
       await Product.destroy({ where: { id } });
       res.status(201).json({
-        message: "Succesfully Deleted Product",
+        message: "Successfully Deleted Product",
       });
     } catch (error) {
       next(error);
