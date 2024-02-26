@@ -6,17 +6,24 @@ describe('Order', () => {
     request(app)
       .post('/api/orders')
       .send({
-        user_id: 1,
-        warehouse_id: 1,
-        products: [
+        "user_id": 1,
+        "warehouse_id": 1,
+        "products": [
           {
-            id: 1,
-            quantity: 2
+            "id": 1,
+            "quantity": 2,
+            "price": 15
+          },
+          {
+            "id": 2,
+            "quantity": 1,
+            "price": 10
           }
         ],
-        status: 'offline',
-        address: '123 Test Street',
-        tracking_number: '123456789'
+        "status": "online",
+        "address": "Jl. Jend. Sudirman No.1, Jakarta",
+        "tracking_code": 2346792,
+        "name": "Order Baru"
       })
       .expect('Content-Type', /json/)
       .expect(201)
