@@ -29,12 +29,13 @@ class OrderController {
         where: { id: warehouse_id },
       });
       if (!warehouse) throw { name: "warehouseNotFound" };
-      
+
       //create order
       const createOrder = await Order.create(
         {
           user_id,
           warehouse_id,
+          name: req.body.name,  //penambahan field name
           total_price: 0,
           total_item: 0,
           status,
@@ -106,7 +107,7 @@ class OrderController {
 
       //send email to user
       const subject = "Order Confirmation";
-      const emailText = 
+      const emailText =
       `Halo ${user.first_name} ${user.last_name},
       This is Your order :
       Tracking Code: ${tracking_code}
@@ -169,7 +170,7 @@ class OrderController {
     }
   };
 
-  //update status 
+  //update status
   static updateStatus = async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
@@ -186,7 +187,7 @@ class OrderController {
     }
   }
 
-  //delete order 
+  //delete order
   static deleteOrder = async (req, res, next) => {
     const t = await sequelize.transaction();
     try{
